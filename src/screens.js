@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 StyleSheet,
 Text,
 View,
-TouchableOpacity
+TouchableOpacity,
+FlatList,
+Modal
 } from 'react-native';
 import { AuthContext } from './context';
 import  colors  from './colors';
 import Icon from 'react-native-vector-icons/AntDesign'
+import tempData from '../tempData';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import AddList from './addListModal';
 
 
 const ScreenContainer = ({ children }) => {
@@ -17,20 +22,41 @@ const ScreenContainer = ({ children }) => {
 }
 
 export const Todos = ({ navigation }) => {
+    const [isShowing, setIsShowing] = React.useState(false);
+
+    function toggle() {
+        setIsShowing(!isShowing);
+    }    
+
     return (
         <ScreenContainer>
+            <Modal animationType="slide" visible={isShowing} onRequestClose={() => toggle()}>
+                <AddList hide={toggle}/>
+            </Modal>
             <View style={{flexDirection: 'row'}}>
                 <View style={styles.divider} />
                     <Text style={styles.title}>
-                    Todo <Text style={{ fontWeight: '100', color: colors.blue}}>Lists</Text>
+                    Todo <Text style={{ fontFamily: 'sans-serif-thin', color: colors.blue}}>Lists</Text>
                     </Text>
-            </View>  
+            </View>
+
             <View style={{marginVertical: 48}}>
-                <TouchableOpacity style={styles.addList}>
+                <TouchableOpacity 
+                    style={styles.addList} 
+                    onPress= {() => toggle()} >
                     <Icon size={24} color={colors.lightBlue} name="plus" />
                 </TouchableOpacity>
-                <Text style={styles.add}>Add List</Text>
-                
+                <Text style={styles.add}>Add List</Text>                
+            </View>
+
+            <View style={{height: 275, paddingLeft: 32}}>
+                <FlatList 
+                    data={tempData} 
+                    keyExtractor={item => item.name} 
+                    horizontal={true} 
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item}) => <TodoList list={item} /> }
+                />
             </View>
             
 
@@ -44,12 +70,32 @@ export const Todos = ({ navigation }) => {
     );
 }
 
-export const TodoList = () => {
+export const AddTodo = () => {
     return (
         <ScreenContainer>
-            <Text> Todo List </Text>                    
+            <Text> dodaj notakte nie</Text>
         </ScreenContainer>
     )
+}
+
+export const TodoList = ({list}) => {
+    const completedCounter = list.todos.filter(todo => todo.completed).length;
+    const remainingCounter = list.todos.length - completedCounter;
+    return (
+        <View style={[styles.listContainer, {backgroundColor: list.color}]}>
+            <Text style={styles.listTitle} numberOfLines={1}> 
+                {list.name} 
+            </Text>
+            <View style={{ alignItems: 'center' }}>
+                <Text style={styles.count}>{remainingCounter}</Text>
+                <Text style={styles.subtitle}>Remaining</Text>
+            </View>
+            <View style={{ alignItems: 'center' }}>
+                <Text style={styles.count}>{completedCounter}</Text>
+                <Text style={styles.subtitle}>Completed</Text>
+            </View>    
+        </View>
+    );
 }
 
 export const Profile = () => {
@@ -128,10 +174,10 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     title: {
-        fontSize: 38,
+        fontSize: 50,
         fontWeight: 'bold',
         color: colors.black,
-        paddingHorizontal: 48
+        paddingHorizontal: 20
     },
     addList: {
         borderWidth: 2,
@@ -146,5 +192,31 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 14,
         marginTop: 8
+    },
+    listContainer: {
+        paddingVertical: 32,
+        paddingHorizontal: 16,
+        borderRadius: 6,
+        marginHorizontal: 12,
+        alignItems: 'center',
+        width: 200
+    },
+    listTitle: {
+        fontSize: 24,
+        fontWeight: "700",
+        color: Colors.white,
+        marginBottom: 12       
+    },
+    count: {
+        fontSize: 48,
+        fontFamily: 'sans-serif-thin',
+        fontWeight: 'normal',
+        color: Colors.white
+    },
+    subtitle: {
+        fontSize: 12,
+        fontWeight: "700",
+        color: Colors.white
     }
+
 });

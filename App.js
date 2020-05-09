@@ -53,17 +53,17 @@ const TabScreen = () => {
   );
 }
 
-const MainStack = createStackNavigator();
+const RootStack = createStackNavigator();
 
-const MainStackScreen = ({ userToken }) => (
-  <MainStack.Navigator headerMode="none">
+const RootStackScreen = ({ userToken }) => (
+  <RootStack.Navigator headerMode="none">
     {userToken ? (
-      <MainStack.Screen name="App" component={TabScreen} />
+      <RootStack.Screen name="App" component={TabScreen} />
     ) : 
     (
-      <MainStack.Screen name="Auth" component={AuthStackScreen} />
+      <RootStack.Screen name="Auth" component={AuthStackScreen} />
     )}
-  </MainStack.Navigator>
+  </RootStack.Navigator>
 );
 
 function App () {
@@ -103,7 +103,7 @@ function App () {
   return (
     <AuthContext.Provider value={authContext}>
     <NavigationContainer>
-      <MainStackScreen userToken={userToken} />
+      <RootStackScreen userToken={userToken} />
     </NavigationContainer>
     </AuthContext.Provider>
   );
