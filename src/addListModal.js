@@ -8,23 +8,55 @@ KeyboardAvoidingView,
 TextInput
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign'
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import colors from './colors';
+import tempData from '../tempData';
+
 
 export default AddList =({hide}) => {
+
+    const backgroundColors = ["#5CD859", "#24A6D9", "#595BD9", "#8022D9", "#D159D8", "#D85963", "#FF8C00"];
+
+    const[text, setText] = React.useState("");
+    const[color, setColor] = React.useState(backgroundColors[1]);
+    
+    
+    const renderColors = () => {        
+        
+        return backgroundColors.map(col => {
+            return (
+                <TouchableOpacity
+                    key={col}
+                    style={[styles.colorSelect, {backgroundColor: col}]}
+                    onPress={() => setColor(col)}>
+                </TouchableOpacity>
+            );
+        }); 
+    }
+
     
     return(
         <KeyboardAvoidingView style={styles.container} behavior="padding">
             <TouchableOpacity style={{ position: "absolute", top: 32, right: 32 }} onPress={hide}>
-                <Icon name="close" size={24} color={Colors.black} />
+                <Icon name="close" size={24} color={colors.black} />
             </TouchableOpacity>
 
             <View style={{alignSelf: 'stretch', marginHorizontal: 32}}>
                 <Text style={styles.title}>Create Todo List</Text>
 
-                <TextInput style={styles.input} placeholder="List name?"></TextInput>
+                <TextInput style={styles.input} placeholder="List name?" onChangeText={text => setText(text)}></TextInput>
+                <View style={{flexDirection: 'row', paddingTop:30, justifyContent: 'space-between'}}>{renderColors()}</View>
 
-                <TouchableOpacity style={styles.create}>
+                <TouchableOpacity 
+                    style={ [styles.create, {backgroundColor: color} ]} 
+                    onPress={() => {
+                        tempData.push({
+                        name: text,
+                        color,
+                        todos: []
+                        });
+                        hide();
+                        }
+                    }>
                     <Text style={{color: colors.white, fontWeight: "bold"}}>Create!</Text>
                 </TouchableOpacity>
 
@@ -66,6 +98,11 @@ const styles = StyleSheet.create(
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: colors.blue
+        },
+        colorSelect: {
+            width: 30,
+            height: 30,
+            borderRadius: 4
         }
     }
 )

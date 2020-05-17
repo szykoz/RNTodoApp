@@ -37,11 +37,15 @@ export default tempData = [
                 completed: false
             },
             {
-                title: "Miner water",
+                title: "Mineral water",
                 completed: false
             },
             {
-                title: "chocolate",
+                title: "Chocolate",
+                completed: true
+            },
+            {
+                title: "Beer",
                 completed: true
             }
         ]
