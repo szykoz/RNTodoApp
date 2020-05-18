@@ -10,7 +10,7 @@ import { AuthContext } from './src/authContext';
 import  {ScreenContext}  from './src/screenContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from './src/colors';
-
+import SplashScreen from 'react-native-splash-screen';
 
 
 const AuthStack = createStackNavigator();
@@ -63,28 +63,32 @@ const Tabs = createBottomTabNavigator();
 const TabScreen = () => {
   return(
     <Tabs.Navigator
+    initialRouteName= "Todos"
+    backBehaviour="initialRoute"
     tabBarOptions={{
-      activeTintColor: colors.blue,
-      inactiveTintColor: colors.gray
-    }}>
+      activeTintColor: colors.blue
+    }}
+    >
       <Tabs.Screen 
         name="Todos" 
         component={TodoStackScreen}
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" color={colors.blue} size={28} />
+            <MaterialCommunityIcons name="home" color={color} size={size}  />
           ),
-        }} />
+        }} 
+      />
       <Tabs.Screen 
         name="Profile" 
         component={ProfileStackScreen}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-circle" color={colors.gray} size={28} />
+            <MaterialCommunityIcons name="account-circle" color={color} size={size} />
           ),
-        }} />
+        }} 
+      />
     </Tabs.Navigator>
   );
 }
@@ -104,6 +108,10 @@ const RootStackScreen = ({ userToken }) => (
 
 function App () {
 
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, [])
+
   const [userToken, setUserToken] = React.useState(null);
   const [screen, setScreen] = React.useState(0);
 
@@ -120,6 +128,7 @@ function App () {
       }
     };
   }, []);
+  
     
   return (
     <AuthContext.Provider value={authContext}>

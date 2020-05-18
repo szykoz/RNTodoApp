@@ -35,7 +35,7 @@ export default AddList =({hide}) => {
 
     
     return(
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <KeyboardAvoidingView style={styles.container} behavior="height">
             <TouchableOpacity style={{ position: "absolute", top: 32, right: 32 }} onPress={hide}>
                 <Icon name="close" size={24} color={colors.black} />
             </TouchableOpacity>
