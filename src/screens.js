@@ -11,7 +11,7 @@ import  { AuthContext }  from './authContext';
 import  colors  from './colors';
 import Icon from 'react-native-vector-icons/AntDesign'
 import tempData from '../tempData';
-import AddList from './addListModal';
+import AddListModal from './addListModal';
 import TodoList from './listElement';
 
 
@@ -24,6 +24,8 @@ const ScreenContainer = ({ children }) => {
 
 export const Todos = ({navigation}) => {
     const [isShowing, setIsShowing] = React.useState(false);
+    const [lists, setLists] = React.useState(tempData);
+   
 
     function toggle() {
         setIsShowing(!isShowing);
@@ -32,7 +34,7 @@ export const Todos = ({navigation}) => {
     return (
         <ScreenContainer>
             <Modal animationType="slide" visible={isShowing} onRequestClose={() => toggle()}>
-                <AddList hide={toggle}/>
+                <AddListModal hide={toggle} addList={addList}/>
             </Modal>
             <View style={{flexDirection: 'row'}}>
                 <View style={styles.divider} />
@@ -52,7 +54,7 @@ export const Todos = ({navigation}) => {
 
             <View style={{height: 300, paddingLeft: 32}}>
                 <FlatList 
-                    data={tempData} 
+                    data={lists} 
                     keyExtractor={item => item.name} 
                     horizontal={true} 
                     showsHorizontalScrollIndicator={false}
@@ -64,9 +66,12 @@ export const Todos = ({navigation}) => {
     );
 }
 
-const renderList = (list, navigation) => {
-    return <TodoList list={list} navigation={navigation}/>
+const renderList = (list, navigation, updateList) => {
+    return <TodoList list={list} navigation={navigation} updateList={updateList}/>
 }
+const addList = (list) => {setLists([...lists, {...list, id: lists.length+1, todos: []}] )} ;
+
+const updateList = (list) => {};
 
 
 export const Profile = () => {

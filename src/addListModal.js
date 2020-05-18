@@ -12,12 +12,14 @@ import colors from './colors';
 import tempData from '../tempData';
 
 
-export default AddList =({hide}) => {
+export default AddList =({hide, addList}) => {
 
     const backgroundColors = ["#5CD859", "#24A6D9", "#595BD9", "#8022D9", "#D159D8", "#D85963", "#FF8C00"];
 
     const[text, setText] = React.useState("");
     const[color, setColor] = React.useState(backgroundColors[1]);
+    
+    const list = {text, color};
     
     
     const renderColors = () => {        
@@ -49,11 +51,7 @@ export default AddList =({hide}) => {
                 <TouchableOpacity 
                     style={ [styles.create, {backgroundColor: color} ]} 
                     onPress={() => {
-                        tempData.push({
-                        name: text,
-                        color,
-                        todos: []
-                        });
+                        addList(list);
                         hide();
                         }
                     }>

@@ -35,7 +35,7 @@ const TodoStackScreen = ({navigation}) => {
   }
   return(
     <TodoStack.Navigator initialRouteName="Todos"
-      screenOptions={{gestureEnabled: true, headerBackTitleVisible: false}} headerMode="float" >
+      screenOptions={{headerBackTitleVisible: false}} >
       <TodoStack.Screen 
         name="Todos" 
         component={Todos} 
