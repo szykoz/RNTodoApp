@@ -5,17 +5,11 @@ Text,
 View,
 TouchableOpacity,
 } from 'react-native';
-import {useNavigationState, useRoute} from '@react-navigation/native';
 import colors from './colors';
-import  {ScreenContext}   from './screenContext';
-import tempData from '../tempData';
+//import tempData from '../tempData';
 
 
-export default TodoList = ({ list, navigation }) => {
-
-    const rout = useNavigationState(state => state);
-    const { screen, setScreen } = React.useContext(ScreenContext);  //tu sie dzieje magia ze bottomTabNav znika na kazdym kolejnym skrinie w staku :)
-    setScreen(rout.index);
+export default ListElement = ({ list, navigation }) => {
 
     const completedCounter = list.todos.filter(todo => todo.completed).length;
     const remainingCounter = list.todos.length - completedCounter;
@@ -23,20 +17,21 @@ export default TodoList = ({ list, navigation }) => {
     
     return (
         <TouchableOpacity 
-            style={[styles.listContainer, {backgroundColor: list.color}]} 
-            onPress={() => navigation.push("TodoDetail", {item: data}) } >
-            <Text style={styles.listTitle} numberOfLines={1}> 
-                {list.name} 
-            </Text>
-            <View style={{ alignItems: 'center' }}>
-                <Text style={styles.count}>{remainingCounter}</Text>
-                <Text style={styles.subtitle}>Remaining</Text>
-            </View>
-            <View style={{ alignItems: 'center' }}>
-                <Text style={styles.count}>{completedCounter}</Text>
-                <Text style={styles.subtitle}>Completed</Text>
-            </View>    
-        </TouchableOpacity>
+        style={[styles.listContainer, {backgroundColor: list.color}]} 
+        onPress={() => navigation.push("TodoDetail", {item: data}) } >
+        <Text style={styles.listTitle} numberOfLines={1}> 
+            {list.name} 
+        </Text>
+        <View style={{ alignItems: 'center' }}>
+            <Text style={styles.count}>{remainingCounter}</Text>
+            <Text style={styles.subtitle}>Remaining</Text>
+        </View>
+        <View style={{ alignItems: 'center' }}>
+            <Text style={styles.count}>{completedCounter}</Text>
+            <Text style={styles.subtitle}>Completed</Text>
+        </View>   
+        {/*onPress={() => alert(JSON.stringify(list))}><Text>klik</Text> */}
+    </TouchableOpacity>
     );
 }
 

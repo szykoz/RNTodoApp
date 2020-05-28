@@ -7,7 +7,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SignIn, CreateAccount, Todos, Profile } from './src/screens';
 import  TodoDetail  from './src/listElementDetail';
 import { AuthContext } from './src/authContext';
-import  {ScreenContext}  from './src/screenContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from './src/colors';
 import SplashScreen from 'react-native-splash-screen';
@@ -26,19 +25,13 @@ const AuthStackScreen = () => {
 
 const TodoStack = createStackNavigator();
 
-const TodoStackScreen = ({navigation}) => {
-  const { screen, setScreen } = React.useContext(ScreenContext);
-  if (screen == 0) {
-    navigation.setOptions({ tabBarVisible: true })
-  } else {
-    navigation.setOptions({ tabBarVisible: false })
-  }
+const TodoStackScreen = () => {
   return(
-    <TodoStack.Navigator initialRouteName="Todos"
+    <TodoStack.Navigator initialRouteName="Tabs"
       screenOptions={{headerBackTitleVisible: false}} >
       <TodoStack.Screen 
-        name="Todos" 
-        component={Todos} 
+        name="Tabs" 
+        component={TabScreen} 
         options={{headerShown: false}} />
       <TodoStack.Screen 
         name="TodoDetail" 
@@ -71,7 +64,7 @@ const TabScreen = () => {
     >
       <Tabs.Screen 
         name="Todos" 
-        component={TodoStackScreen}
+        component={Todos}
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
@@ -98,7 +91,7 @@ const RootStack = createStackNavigator();
 const RootStackScreen = ({ userToken }) => (
   <RootStack.Navigator headerMode="none">
     {userToken ? (
-      <RootStack.Screen name="App" component={TabScreen} />
+      <RootStack.Screen name="App" component={TodoStackScreen} />
     ) : 
     (
       <RootStack.Screen name="Auth" component={AuthStackScreen} />
@@ -113,7 +106,6 @@ function App () {
   }, [])
 
   const [userToken, setUserToken] = React.useState(null);
-  const [screen, setScreen] = React.useState(0);
 
   const authContext = React.useMemo(() => {
     return {
@@ -132,11 +124,9 @@ function App () {
     
   return (
     <AuthContext.Provider value={authContext}>
-      <ScreenContext.Provider value={{screen, setScreen}}>
         <NavigationContainer>
           <RootStackScreen userToken={userToken} />
         </NavigationContainer>
-      </ScreenContext.Provider>
     </AuthContext.Provider>
   );
 };

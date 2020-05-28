@@ -12,7 +12,7 @@ import  colors  from './colors';
 import Icon from 'react-native-vector-icons/AntDesign'
 import tempData from '../tempData';
 import AddListModal from './addListModal';
-import TodoList from './listElement';
+import ListElement from './listElement';
 
 
 const ScreenContainer = ({ children }) => {
@@ -25,11 +25,18 @@ const ScreenContainer = ({ children }) => {
 export const Todos = ({navigation}) => {
     const [isShowing, setIsShowing] = React.useState(false);
     const [lists, setLists] = React.useState(tempData);
-   
 
     function toggle() {
         setIsShowing(!isShowing);
-    }    
+    }  
+
+    const addList = (title, color) => {        
+        setLists( [...lists,{id: lists.length+1, name: title, color: color, todos: []}] );
+    };      
+
+    // const renderList = (navigation) => {
+    //     return <ListElement list={lists} navigation={navigation}/>
+    // }
 
     return (
         <ScreenContainer>
@@ -52,13 +59,16 @@ export const Todos = ({navigation}) => {
                 <Text style={styles.add}>Add List</Text>                
             </View>
 
-            <View style={{height: 300, paddingLeft: 32}}>
-                <FlatList 
+            <View style={{height: 280, paddingLeft: 32}}>
+                {//<TouchableOpacity
+                //onPress={() => alert(JSON.stringify(lists))}><Text>hej</Text></TouchableOpacity>
+                }
+                 <FlatList 
                     data={lists} 
                     keyExtractor={item => item.name} 
                     horizontal={true} 
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({item}) => renderList(item, navigation) }
+                    renderItem={({item}) => <ListElement list={item} navigation={navigation}/>}
                 />
             </View>
             
@@ -66,12 +76,8 @@ export const Todos = ({navigation}) => {
     );
 }
 
-const renderList = (list, navigation, updateList) => {
-    return <TodoList list={list} navigation={navigation} updateList={updateList}/>
-}
-const addList = (list) => {setLists([...lists, {...list, id: lists.length+1, todos: []}] )} ;
 
-const updateList = (list) => {};
+//const updateList = (list) => {};
 
 
 export const Profile = () => {
@@ -88,12 +94,6 @@ export const Profile = () => {
         </ScreenContainer>
     );
 }
-
-export const Splash = () => (
-    <ScreenContainer>
-      <Text>Loading...</Text>
-    </ScreenContainer>
-  );
 
 
 export const SignIn = ({ navigation }) => {

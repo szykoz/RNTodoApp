@@ -9,7 +9,7 @@ TextInput
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign'
 import colors from './colors';
-import tempData from '../tempData';
+//import tempData from '../tempData';
 
 
 export default AddList =({hide, addList}) => {
@@ -17,10 +17,7 @@ export default AddList =({hide, addList}) => {
     const backgroundColors = ["#5CD859", "#24A6D9", "#595BD9", "#8022D9", "#D159D8", "#D85963", "#FF8C00"];
 
     const[text, setText] = React.useState("");
-    const[color, setColor] = React.useState(backgroundColors[1]);
-    
-    const list = {text, color};
-    
+    const[color, setColor] = React.useState(backgroundColors[1]);    
     
     const renderColors = () => {        
         
@@ -34,11 +31,10 @@ export default AddList =({hide, addList}) => {
             );
         }); 
     }
-
     
     return(
         <KeyboardAvoidingView style={styles.container} behavior="height">
-            <TouchableOpacity style={{ position: "absolute", top: 32, right: 32 }} onPress={hide}>
+            <TouchableOpacity style={{ position: "absolute", top: 32, left: 32 }} onPress={hide}>
                 <Icon name="close" size={24} color={colors.black} />
             </TouchableOpacity>
 
@@ -51,7 +47,7 @@ export default AddList =({hide, addList}) => {
                 <TouchableOpacity 
                     style={ [styles.create, {backgroundColor: color} ]} 
                     onPress={() => {
-                        addList(list);
+                        addList(text, color);
                         hide();
                         }
                     }>
