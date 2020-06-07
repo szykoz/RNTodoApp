@@ -32,7 +32,14 @@ export const Todos = ({navigation}) => {
 
     const addList = (title, color) => { 
         setLists(lists => ([...lists, {id: lists.length+1, name: title, color: color, todos: []}]));
-    };      
+    };
+
+    const deleteList = (index) => {
+        lists.splice(index,1);
+        setLists(lists.map(item => {
+            return item.id === lists.id ? lists : item;
+          }));
+    }
 
     return (
         <ScreenContainer>
@@ -56,15 +63,12 @@ export const Todos = ({navigation}) => {
             </View>
 
             <View style={{height: 280, paddingLeft: 32}}>
-                {//<TouchableOpacity
-                //onPress={() => alert(JSON.stringify(lists))}><Text>hej</Text></TouchableOpacity>
-                }
                  <FlatList 
                     data={lists} 
-                    keyExtractor={(item,index) => item.name+index} 
+                    keyExtractor={(item,index) => index.toString()} 
                     horizontal={true} 
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({item,index}) => <ListElement list={item} navigation={navigation}/>}
+                    renderItem={({item, index}) => <ListElement list={item} navigation={navigation} deleteList={deleteList}/>}
                 />
             </View>
             

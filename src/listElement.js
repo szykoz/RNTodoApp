@@ -4,23 +4,40 @@ StyleSheet,
 Text,
 View,
 TouchableOpacity,
+Alert
 } from 'react-native';
 import colors from './colors';
 
 
-export default ListElement = ({list, navigation}) => {
+export default ListElement = ({list, navigation, deleteList}) => {
     
     const completedCounter=list.todos.filter(todo => todo.completed).length;
     const remainingCounter=list.todos.length - completedCounter;
     
     const data = {list, completedCounter, remainingCounter};
+
+    const createTwoButtonAlert = () =>
+    Alert.alert(
+      "Delete To-Do?",
+      "This operation can't be undone!",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Delete", onPress: () => deleteList(list.id-1) }
+      ],
+      { cancelable: false }
+    );
     
     return (
         <TouchableOpacity 
         style={[styles.listContainer, {backgroundColor: list.color}]}
         onPress={() => {
             navigation.push("TodoDetail", {item: data})
-        }}>
+        }}
+        onLongPress={createTwoButtonAlert}>
         <Text style={styles.listTitle} numberOfLines={1}> 
             {list.name} 
         </Text>
