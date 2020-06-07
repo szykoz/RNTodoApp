@@ -1,104 +1,174 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-StyleSheet,
-Text,
-View,
-TouchableOpacity,
-KeyboardAvoidingView,
-TextInput,
-FlatList
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  TextInput,
+  FlatList,
+  Keyboard,
+  Animated
 } from 'react-native';
 import colors from './colors';
+import { Swipeable } from 'react-native-gesture-handler';
 
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
+import { TodoGlobalState } from '../contexts/todoContext';
 
 
 export default TodoDetail = (props) => {
- 
 
-    const { route, navigation } = props;
-    const { item } = route.params;
-    const { list, completedCounter, remainingCounter } = item;
-    const { name, color, todos } = list;
-    
-    navigation.setOptions({
-        headerStyle: {
-            backgroundColor: color
-        },
-    headerTintColor: 'white'});
-    
-      return (
-        <View style={styles.container}>    
-        
-          <View style={[styles.section,{flex: 1}]}>
-          
-            <FlatList 
-              keyExtractor={(item) => item.title} 
-              data={list.todos} 
-              renderItem={({ item }) => ( 
-                <View style={styles.todoContainer}>
-                  <TouchableOpacity>
-                    <Fontisto 
-                      name={item.completed ? 'checkbox-active' : 'checkbox-passive'} 
-                      size={24} color={item.completed ? colors.green : colors.black} 
-                      style={{width: 38}} 
-                    />
-                  </TouchableOpacity>
-                  <Text style={[styles.todo, {textDecorationLine: item.completed ? 'line-through' : 'none', color: item.completed ? colors.gray : colors.black}]}>{item.title}</Text>
-                </View>
-              )}
-              contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 32}}
-            />
-          </View>
 
-          <KeyboardAvoidingView style={[styles.section, styles.footer]} behavior="height" >
-                <TextInput style={[styles.input, {borderColor: color}]} />
-                <TouchableOpacity style={[styles.addTodo, {backgroundColor: color}]}>
-                    <AntDesign name="plus" size={16} color={colors.white} />
+  const { route, navigation } = props;
+  const { item } = route.params;
+  let { list, completedCounter, remainingCounter } = item;
+  const { color } = list;
+  const [lists, setLists] = React.useContext(TodoGlobalState);
+  const [text, setText] = React.useState("");
+  const [completedTasks, setCompletedTasks] = React.useState(completedCounter);
+  const [allTasks, setAllTasks] = React.useState(remainingCounter + completedCounter);
+
+
+  navigation.setOptions({
+    headerStyle: {
+      backgroundColor: color
+    },
+    headerTintColor: 'white'
+  });
+
+  const updateList = () => {
+    setLists(lists.map(item => {
+      return item.id === list.id ? list : item;
+    }));
+  }
+
+  const toggleTodoCompleted = (index) => {
+
+    list.todos[index].completed = !list.todos[index].completed;
+    list.todos[index].completed ? setCompletedTasks(completedTasks + 1) : setCompletedTasks(completedTasks - 1)
+
+   updateList();
+    completedCounter = 10;
+  }
+  const addTodo = () => {
+    if (text) {
+      list.todos.push({ title: text, completed: false });
+      setAllTasks(allTasks + 1);
+      updateList();
+      setText("");
+      Keyboard.dismiss();
+    }
+    
+  }
+
+  const deleteTodo = (index) => {
+    let deleted = list.todos.splice(index,1);
+    updateList();
+    if(!deleted.completed){
+      if(completedTasks-1<0) {
+        setCompletedTasks(0);
+      } else{
+        setCompletedTasks(completedTasks-1);
+      }        
+      setAllTasks(allTasks-1);
+    } else {
+      setAllTasks(allTasks-1);
+    }
+  }
+
+  const RightActions = (dragX, index) => {
+    return (
+      <TouchableOpacity onPress={() => deleteTodo(index)}>
+        <Animated.View style={styles.deleteButton}>
+          <Animated.Text style={{ color: colors.white, fontWeight: 'bold' }}>
+            Delete
+            </Animated.Text>
+        </Animated.View>
+      </TouchableOpacity>
+    )
+  }
+
+
+  return (
+
+    <View style={styles.container}>
+
+      <View style={[styles.section, { flex: 1 }]}>
+
+        <FlatList
+          keyExtractor={(item, index) => item.title + index}
+          data={list.todos}
+          renderItem={({ item, index }) => (
+            <Swipeable renderRightActions={(_, dragX) => RightActions(dragX, index)}>
+              <View style={styles.todoContainer}>
+                <TouchableOpacity onPress={() => { toggleTodoCompleted(index); }}>
+                  <Fontisto
+                    name={item.completed ? 'checkbox-active' : 'checkbox-passive'}
+                    size={24} color={item.completed ? colors.green : colors.black}
+                    style={{ width: 38 }}
+                  />
                 </TouchableOpacity>
-                
-          </KeyboardAvoidingView>
-          <View style={[styles.section, styles.header, {borderBottomColor: color},{marginBottom: 24}, {marginHorizontal: 24}]}>
-                <Text style={styles.taskCount}>
-                  {completedCounter} of {remainingCounter+completedCounter} tasks
-                </Text> 
-                </View>
+                <Text style={[styles.todo, { textDecorationLine: item.completed ? 'line-through' : 'none', color: item.completed ? colors.gray : colors.black }]}>{item.title}</Text>
+              </View>
+            </Swipeable>
+          )}
+          contentContainerStyle={{ paddingHorizontal: 32, paddingVertical: 32 }}
+        />
 
-    
-        </View>
-      );
+      </View>
+
+
+
+      <KeyboardAvoidingView style={[styles.section, styles.footer]} behavior="height" >
+        <TextInput style={[styles.input, { borderColor: color }]} onChangeText={text => setText(text)} value={text} />
+        <TouchableOpacity style={[styles.addTodo, { backgroundColor: color }]} onPress={() => addTodo()}>
+          <AntDesign name="plus" size={16} color={colors.white} />
+        </TouchableOpacity>
+
+      </KeyboardAvoidingView>
+      <View style={[styles.section, styles.header, { borderBottomColor: color }, { marginBottom: 24 }, { marginHorizontal: 24 }]}>
+        <Text style={styles.taskCount}>
+          {completedTasks} of {allTasks} tasks
+                </Text>
+      </View>
+
+
+    </View>
+
+  );
 }
 
 
 const styles = StyleSheet.create(
-    {
+  {
     container: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center'
     },
     section: {
-        //flex: 1,
-        alignSelf: "stretch"
+      //flex: 1,
+      alignSelf: "stretch"
     },
     header: {
-        alignItems: 'center',
-        justifyContent: "center",
-        //marginLeft: 64,
-        borderBottomWidth: 3
+      alignItems: 'center',
+      justifyContent: "center",
+      //marginLeft: 64,
+      borderBottomWidth: 3
     },
     title: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: colors.black
+      fontSize: 30,
+      fontWeight: 'bold',
+      color: colors.black
     },
     taskCount: {
-        // marginTop: 4,
-        // marginBottom: 16,
-        color: colors.gray,
-        fontSize: 14,
-        fontWeight: "bold"
+      // marginTop: 4,
+      // marginBottom: 16,
+      color: colors.gray,
+      fontSize: 14,
+      fontWeight: "bold"
     },
     footer: {
       paddingHorizontal: 32,
@@ -129,5 +199,15 @@ const styles = StyleSheet.create(
       color: colors.black,
       fontWeight: "bold",
       fontSize: 16
+    },
+    deleteButton: {
+      flex: 1,
+      backgroundColor: colors.red,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 15,
+      borderRadius: 10,
+      margin: 5
+
     }
-});
+  });

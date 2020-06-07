@@ -6,19 +6,21 @@ View,
 TouchableOpacity,
 } from 'react-native';
 import colors from './colors';
-//import tempData from '../tempData';
 
 
-export default ListElement = ({ list, navigation }) => {
-
-    const completedCounter = list.todos.filter(todo => todo.completed).length;
-    const remainingCounter = list.todos.length - completedCounter;
+export default ListElement = ({list, navigation}) => {
+    
+    const completedCounter=list.todos.filter(todo => todo.completed).length;
+    const remainingCounter=list.todos.length - completedCounter;
+    
     const data = {list, completedCounter, remainingCounter};
     
     return (
         <TouchableOpacity 
-        style={[styles.listContainer, {backgroundColor: list.color}]} 
-        onPress={() => navigation.push("TodoDetail", {item: data}) } >
+        style={[styles.listContainer, {backgroundColor: list.color}]}
+        onPress={() => {
+            navigation.push("TodoDetail", {item: data})
+        }}>
         <Text style={styles.listTitle} numberOfLines={1}> 
             {list.name} 
         </Text>
@@ -30,7 +32,7 @@ export default ListElement = ({ list, navigation }) => {
             <Text style={styles.count}>{completedCounter}</Text>
             <Text style={styles.subtitle}>Completed</Text>
         </View>   
-        {/*onPress={() => alert(JSON.stringify(list))}><Text>klik</Text> */}
+        
     </TouchableOpacity>
     );
 }

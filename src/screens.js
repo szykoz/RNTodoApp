@@ -7,13 +7,12 @@ TouchableOpacity,
 FlatList,
 Modal
 } from 'react-native';
-import  { AuthContext }  from './authContext';
+import  { AuthContext }  from '../contexts/authContext';
 import  colors  from './colors';
 import Icon from 'react-native-vector-icons/AntDesign'
-import tempData from '../tempData';
 import AddListModal from './addListModal';
 import ListElement from './listElement';
-
+import {TodoGlobalState} from '../contexts/todoContext';
 
 const ScreenContainer = ({ children }) => {
     return(
@@ -24,19 +23,16 @@ const ScreenContainer = ({ children }) => {
 
 export const Todos = ({navigation}) => {
     const [isShowing, setIsShowing] = React.useState(false);
-    const [lists, setLists] = React.useState(tempData);
+
+    const [lists, setLists] = React.useContext(TodoGlobalState);
 
     function toggle() {
         setIsShowing(!isShowing);
-    }  
+    }
 
-    const addList = (title, color) => {        
-        setLists( [...lists,{id: lists.length+1, name: title, color: color, todos: []}] );
+    const addList = (title, color) => { 
+        setLists(lists => ([...lists, {id: lists.length+1, name: title, color: color, todos: []}]));
     };      
-
-    // const renderList = (navigation) => {
-    //     return <ListElement list={lists} navigation={navigation}/>
-    // }
 
     return (
         <ScreenContainer>
@@ -48,7 +44,7 @@ export const Todos = ({navigation}) => {
                     <Text style={styles.title}>
                     Todo <Text style={{ fontFamily: 'sans-serif-thin', color: colors.blue}}>Lists</Text>
                     </Text>
-            </View>
+            </View> 
 
             <View style={{marginVertical: 32}}>
                 <TouchableOpacity 
@@ -65,19 +61,16 @@ export const Todos = ({navigation}) => {
                 }
                  <FlatList 
                     data={lists} 
-                    keyExtractor={item => item.name} 
+                    keyExtractor={(item,index) => item.name+index} 
                     horizontal={true} 
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({item}) => <ListElement list={item} navigation={navigation}/>}
+                    renderItem={({item,index}) => <ListElement list={item} navigation={navigation}/>}
                 />
             </View>
             
         </ScreenContainer>
     );
 }
-
-
-//const updateList = (list) => {};
 
 
 export const Profile = () => {

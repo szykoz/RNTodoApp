@@ -6,10 +6,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { SignIn, CreateAccount, Todos, Profile } from './src/screens';
 import  TodoDetail  from './src/listElementDetail';
-import { AuthContext } from './src/authContext';
+import { AuthContext } from './contexts/authContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colors from './src/colors';
 import SplashScreen from 'react-native-splash-screen';
+import {TodoGlobalState} from './contexts/todoContext';
+import tempData from './tempData';
 
 
 const AuthStack = createStackNavigator();
@@ -26,7 +28,11 @@ const AuthStackScreen = () => {
 const TodoStack = createStackNavigator();
 
 const TodoStackScreen = () => {
+  
+  const [lists, setLists] = React.useState(tempData);
+  
   return(
+    <TodoGlobalState.Provider value={ [lists, setLists] }>
     <TodoStack.Navigator initialRouteName="Tabs"
       screenOptions={{headerBackTitleVisible: false}} >
       <TodoStack.Screen 
@@ -41,6 +47,7 @@ const TodoStackScreen = () => {
         })}
        />
     </TodoStack.Navigator>
+    </TodoGlobalState.Provider>
   );
 }
 
@@ -107,6 +114,7 @@ function App () {
 
   const [userToken, setUserToken] = React.useState(null);
 
+
   const authContext = React.useMemo(() => {
     return {
       signIn: () => {
@@ -123,7 +131,7 @@ function App () {
   
     
   return (
-    <AuthContext.Provider value={authContext}>
+    <AuthContext.Provider value={authContext}>      
         <NavigationContainer>
           <RootStackScreen userToken={userToken} />
         </NavigationContainer>
