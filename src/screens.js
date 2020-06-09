@@ -5,7 +5,9 @@ Text,
 View,
 TouchableOpacity,
 FlatList,
-Modal
+Modal,
+TextInput,
+Image
 } from 'react-native';
 import  { AuthContext }  from '../contexts/authContext';
 import  colors  from './colors';
@@ -19,7 +21,6 @@ const ScreenContainer = ({ children }) => {
     <View style={styles.container}>{children}</View>
     );
 }
-
 
 export const Todos = ({navigation}) => {
     const [isShowing, setIsShowing] = React.useState(false);
@@ -49,7 +50,7 @@ export const Todos = ({navigation}) => {
             <View style={{flexDirection: 'row'}}>
                 <View style={styles.divider} />
                     <Text style={styles.title}>
-                    Todo <Text style={{ fontFamily: 'sans-serif-thin', color: colors.blue}}>Lists</Text>
+                        Todo <Text style={{ fontFamily: 'sans-serif-thin', color: colors.blue}}>Lists</Text>
                     </Text>
             </View> 
 
@@ -63,67 +64,100 @@ export const Todos = ({navigation}) => {
             </View>
 
             <View style={{height: 280, paddingLeft: 32}}>
-                 <FlatList 
+                <FlatList 
                     data={lists} 
-                    keyExtractor={(item,index) => index.toString()} 
+                    keyExtractor={(_,index) => index.toString()} 
                     horizontal={true} 
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({item, index}) => <ListElement list={item} navigation={navigation} deleteList={deleteList}/>}
+                    renderItem={({item, index}) => <ListElement list={item} navigation={navigation} deleteList={deleteList} index={index}/>}
                 />
-            </View>
-            
+            </View>            
         </ScreenContainer>
     );
 }
 
 
 export const Profile = () => {
-    const { signOut } = React.useContext(AuthContext);
-    
+        const { signOut} = React.useContext(AuthContext);    
     return (
         <ScreenContainer>
-            <Text> My Name </Text>
+            <View style={{marginBottom: 48}}>
+            <Text style={{fontSize: 36}}> Hi, User </Text>
+            </View>
             <TouchableOpacity
-            style={[styles.button,{backgroundColor: '#D61A3C'}]}
-            onPress={()=> {signOut()}} >
-            <Text style={{color:colors.white, fontWeight:'bold'}}>Log out</Text>
+                style={[styles.button,{backgroundColor: '#D61A3C', marginBottom: 4}]}
+                onPress={()=> {signOut()}}>
+                <Icon name="poweroff" size={36} style={{color: colors.white}}/>
             </TouchableOpacity>
+            <Text style={{color: "#D61A3C", fontWeight: 'bold'}}>Log Out</Text>
         </ScreenContainer>
     );
 }
 
 
 export const SignIn = ({ navigation }) => {
-    const { signIn } = React.useContext(AuthContext);
+        const { signIn } = React.useContext(AuthContext);
+        const [login, setLogin] = React.useState("");
+        const [password, setPassword] = React.useState("");
     return (
         <ScreenContainer>
-            <Text>sign in screen</Text>
+            <View style={{alignItems: 'center', paddingBottom: 24}}>
+                <Image source={require('./images/user.png')} style={{width:140, height: 140, resizeMode: 'contain'}} />
+            </View>
+            <View style={{alignSelf: 'stretch', marginHorizontal: 32}}>
+                <TextInput style={styles.input} placeholder="Login" onChangeText={text => setLogin(text)}></TextInput>
+                <TextInput style={styles.input} placeholder="Password" onChangeText={text => setPassword(text)} secureTextEntry={true}></TextInput>
+            </View>
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => signIn() } >
-                <Text>Sign in</Text>
+                onPress={() => {
+                    if(login!="" && password!="") {
+                        signIn(login)
+                    } else {
+                        alert("You must enter LOGIN and PASSWORD!")
+                    }
+                 }}>
+                <Icon name="plus" size={18} color={colors.white}/>
             </TouchableOpacity>
-            <Text>New member? Create an account!</Text>
-            <TouchableOpacity
-                style={[styles.button,{backgroundColor:'#8E8E93'}]}
-                onPress={() => navigation.navigate('CreateAccount')} >
-                <Text>Sign Up</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row'}}>
+                <Text style={{fontSize: 18}}>New member? </Text>
+                <TouchableOpacity 
+                    style={{color: "448AFF"}}
+                    onPress={() => navigation.navigate('CreateAccount')}>
+                    <Text style={{fontSize: 18, fontWeight: 'bold', color: "#448AFF"}}>Create an account!</Text>
+                </TouchableOpacity>
+            </View>           
         </ScreenContainer>
     );
 }
 
 export const CreateAccount = () => {
-    const { signUp } = React.useContext(AuthContext);
+        const { signUp } = React.useContext(AuthContext);
+        const [login, setLogin] = React.useState("");
+        const [password, setPassword] = React.useState("");
+        const [password2, setPassword2] = React.useState("")
     return (
-        <ScreenContainer>
-            <Text>Register screen</Text>
+        <View style={{flex: 1, alignItems: 'flex-start'}}>
+            <View style={{alignSelf: 'stretch', marginHorizontal: 32}}>
+                <Text style={styles.authTitle}>Enter your username</Text>
+                <TextInput style={styles.input} placeholder="Login" onChangeText={text => setLogin(text)}></TextInput>
+                <Text style={styles.authTitle}>Enter your password</Text>
+                <TextInput style={styles.input} placeholder="Password" onChangeText={text => setPassword(text)} secureTextEntry={true}></TextInput>
+                <Text style={styles.authTitle}>Re-enter your password</Text>
+                <TextInput style={styles.input} placeholder="Password" onChangeText={text => setPassword2(text)} secureTextEntry={true}></TextInput>
+            </View>
             <TouchableOpacity
-                style={styles.button}
-                onPress={() => signUp()} >
-                    <Text>Create an account</Text>
-                </TouchableOpacity>
-        </ScreenContainer>
+                style={[styles.button,{backgroundColor: "#448AFF", marginHorizontal: 32, marginTop: 24}]}
+                onPress={() => {
+                    if(login!="" && password!="" && password === password2){
+                        signUp()
+                    } else {
+                        alert("Check your creditentials")
+                    }
+                }}>
+                <Text style={{color: colors.white, fontWeight: 'bold'}}>Create an account</Text>
+            </TouchableOpacity>
+        </View>
     );
 }
 
@@ -136,10 +170,12 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white
     },
     button: {
-        backgroundColor: '#C7C7CC',
-        padding: 15,
-        borderRadius: 10,
-        margin: 20
+        backgroundColor: "#448AFF",
+        borderRadius: 4,
+        padding: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 24
     },
     divider: {
         backgroundColor: colors.lightBlue,
@@ -166,6 +202,22 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 14,
         marginTop: 8
+    },
+    input: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.blue,
+        borderRadius: 6,
+        height:50,
+        marginTop: 8,
+        paddingHorizontal: 16,
+        fontSize: 18
+    },
+    authTitle: {
+        fontSize: 21, 
+        color: "#448AFF", 
+        marginTop: 32,
+        fontWeight: 'bold',
+        paddingHorizontal: 20
     }
 
 });

@@ -49,8 +49,7 @@ export default TodoDetail = (props) => {
     list.todos[index].completed = !list.todos[index].completed;
     list.todos[index].completed ? setCompletedTasks(completedTasks + 1) : setCompletedTasks(completedTasks - 1)
 
-   updateList();
-    completedCounter = 10;
+    updateList();
   }
   const addTodo = () => {
     if (text) {
@@ -65,25 +64,30 @@ export default TodoDetail = (props) => {
 
   const deleteTodo = (index) => {
     let deleted = list.todos.splice(index,1);
+    //alert(JSON.stringify(deleted));
     updateList();
-    if(!deleted.completed){
-      if(completedTasks-1<0) {
-        setCompletedTasks(0);
-      } else{
-        setCompletedTasks(completedTasks-1);
-      }        
+
+    if(deleted[0].completed) {
       setAllTasks(allTasks-1);
-    } else {
+      setCompletedTasks(completedTasks-1);
+    }
+    else {
       setAllTasks(allTasks-1);
     }
   }
 
   const RightActions = (dragX, index) => {
+    const trans = dragX.interpolate({
+      inputRange: [-50, -10, 0],
+      outputRange: [0, 10, 20]
+    });
     return (
       <TouchableOpacity onPress={() => deleteTodo(index)}>
-        <Animated.View style={styles.deleteButton}>
-          <Animated.Text style={{ color: colors.white, fontWeight: 'bold' }}>
-            Delete
+        <Animated.View style={styles.deleteButton}>        
+          <Animated.Text style={[{ color: colors.white, fontWeight: 'bold' },{
+              transform: [{ translateX: trans }],
+            }]}>
+          <AntDesign name="minus" size={16} color={colors.white} />
             </Animated.Text>
         </Animated.View>
       </TouchableOpacity>
@@ -94,9 +98,7 @@ export default TodoDetail = (props) => {
   return (
 
     <View style={styles.container}>
-
       <View style={[styles.section, { flex: 1 }]}>
-
         <FlatList
           keyExtractor={(item, index) => item.title + index}
           data={list.todos}
@@ -116,13 +118,10 @@ export default TodoDetail = (props) => {
           )}
           contentContainerStyle={{ paddingHorizontal: 32, paddingVertical: 32 }}
         />
-
       </View>
 
-
-
       <KeyboardAvoidingView style={[styles.section, styles.footer]} behavior="height" >
-        <TextInput style={[styles.input, { borderColor: color }]} onChangeText={text => setText(text)} value={text} />
+        <TextInput style={[styles.input, { borderColor: color }]} onChangeText={text => setText(text)} value={text} maxLength={35}/>
         <TouchableOpacity style={[styles.addTodo, { backgroundColor: color }]} onPress={() => addTodo()}>
           <AntDesign name="plus" size={16} color={colors.white} />
         </TouchableOpacity>
@@ -205,9 +204,9 @@ const styles = StyleSheet.create(
       backgroundColor: colors.red,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 15,
-      borderRadius: 10,
-      margin: 5
+      borderRadius: 4,
+      paddingHorizontal: 20,
+      marginVertical: 10      
 
     }
   });

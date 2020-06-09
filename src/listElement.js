@@ -9,7 +9,7 @@ Alert
 import colors from './colors';
 
 
-export default ListElement = ({list, navigation, deleteList}) => {
+export default ListElement = ({list, navigation, deleteList, index}) => {
     
     const completedCounter=list.todos.filter(todo => todo.completed).length;
     const remainingCounter=list.todos.length - completedCounter;
@@ -26,7 +26,7 @@ export default ListElement = ({list, navigation, deleteList}) => {
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { text: "Delete", onPress: () => deleteList(list.id-1) }
+        { text: "Delete", onPress: () => deleteList(index) }
       ],
       { cancelable: false }
     );

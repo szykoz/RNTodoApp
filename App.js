@@ -18,9 +18,21 @@ const AuthStack = createStackNavigator();
 
 const AuthStackScreen = () => {
   return (
-    <AuthStack.Navigator>
+    <AuthStack.Navigator 
+    screenOptions={{
+      gestureEnabled: true,
+      headerStyle: {
+      backgroundColor: "#3F51B5"
+      },
+      headerTitleStyle: {
+        fontWeight: 'bold'
+      },
+      headerTintColor: colors.white,
+      headerBackTitleVisible:false
+    }}
+    headerMode='float'>
     <AuthStack.Screen name="SignIn" component={SignIn} options={{title: 'Sign In'}} />
-    <AuthStack.Screen name="CreateAccount" component={CreateAccount} options={{title: 'Create Account'}}/>
+    <AuthStack.Screen name="CreateAccount" component={CreateAccount} options={{title: 'Sign Up'}}/>
     </AuthStack.Navigator>
   );
 }
@@ -117,11 +129,11 @@ function App () {
 
   const authContext = React.useMemo(() => {
     return {
-      signIn: () => {
-        setUserToken('asdf');
+      signIn: (token) => {
+        setUserToken(token);
       },
       signUp: () => {
-        setUserToken('asdf');
+        setUserToken(token);
       },
       signOut: () => {
         setUserToken(null);
