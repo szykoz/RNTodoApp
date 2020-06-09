@@ -132,7 +132,7 @@ function App () {
       signIn: (token) => {
         setUserToken(token);
       },
-      signUp: () => {
+      signUp: (token) => {
         setUserToken(token);
       },
       signOut: () => {

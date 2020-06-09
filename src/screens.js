@@ -114,7 +114,7 @@ export const SignIn = ({ navigation }) => {
                     if(login!="" && password!="") {
                         signIn(login)
                     } else {
-                        alert("You must enter LOGIN and PASSWORD!")
+                        alert("Check your credentials!")
                     }
                  }}>
                 <Icon name="plus" size={18} color={colors.white}/>
@@ -151,9 +151,9 @@ export const CreateAccount = () => {
                 style={[styles.button,{backgroundColor: "#448AFF", marginHorizontal: 32, marginTop: 24}]}
                 onPress={() => {
                     if(login!="" && password!="" && password === password2){
-                        signUp()
+                        signUp(login)
                     } else {
-                        alert("Check your creditentials")
+                        alert("Check your credentials!")
                     }
                 }}>
                 <Text style={{color: colors.white, fontWeight: 'bold'}}>Create an account</Text>
