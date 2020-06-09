@@ -109,7 +109,7 @@ export const SignIn = ({ navigation }) => {
                 <TextInput style={styles.input} placeholder="Password" onChangeText={text => setPassword(text)} secureTextEntry={true}></TextInput>
             </View>
             <TouchableOpacity
-                style={styles.button}
+                style={[styles.button,{backgroundColor: '#448AFF', marginBottom: 4}]}
                 onPress={() => {
                     if(login!="" && password!="") {
                         signIn(login)
@@ -119,6 +119,7 @@ export const SignIn = ({ navigation }) => {
                  }}>
                 <Icon name="plus" size={18} color={colors.white}/>
             </TouchableOpacity>
+			<Text style={{color: "#448AFF", fontWeight: 'bold', marginBottom: 18}}>Log In</Text>
             <View style={{flexDirection: 'row'}}>
                 <Text style={{fontSize: 18}}>New member? </Text>
                 <TouchableOpacity 
